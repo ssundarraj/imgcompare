@@ -4,4 +4,5 @@ Execute:
 
 python imagecompare.py image1.format image2.format
 
-
+Dependencies:
+Image library (PIL)
