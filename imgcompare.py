@@ -75,8 +75,8 @@ if __name__=="__main__":
 	if equal(img1, img2):
 		print "Duplicate detected"
 	else:
-		print mydiff(img1, img2)
+		"""print mydiff(img1, img2)
 		print mydiff2(img1, img2)
 		print mydiff3(img1, img2)
-		print mydiff(img1, img2)+mydiff2(img1, img2)+mydiff3(img1, img2)
+		print mydiff(img1, img2)+mydiff2(img1, img2)+mydiff3(img1, img2)"""
 		print splitdiff(img1, img2);
