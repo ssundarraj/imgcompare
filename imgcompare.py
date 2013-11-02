@@ -1,18 +1,6 @@
-import Image
+from PIL import Image, ImageChops
 import math
 import sys
-import ImageChops
-import operator
-
-def rmsdiff(im1, im2):
-    "Calculate the root-mean-square difference between two images"
-
-    h = ImageChops.difference(im1, im2).histogram()
-
-    # calculate rms
-    return math.sqrt(reduce(operator.add,
-        map(lambda h, i: h*(i**2), h, range(256))
-    ) / (float(im1.size[0]) * im1.size[1]))
 
 def equal(im1, im2):
     return ImageChops.difference(im1, im2).getbbox() is None
@@ -27,24 +15,8 @@ def mydiff(img1, img2):
 	rms=math.sqrt(math.fabs(rms))
 	return rms
 
-def mydiff2(im1, im2):
-	h = ImageChops.difference(im1, im2).histogram()
-	rms=0
-	for i in range(len(h)):
-		rms=rms+h[i]**2
-	rms=math.sqrt(rms/len(h))
-	return rms
-
-def mydiff3(im1, im2):
-	h = ImageChops.difference(im1, im2).histogram()
-	rms=0
-	for i in range(len(h)):
-		rms=rms+h[i]**2
-	rms=math.sqrt(rms)/len(h)
-	return rms
-
-def splitdiff(im1, im2):
-	nbox=20
+def splitdiff(im1, im2, n):
+	nbox=n
 	width1=im1.size[0]/nbox
 	height1=im1.size[1]/nbox
 	width2=im2.size[0]/nbox
@@ -65,18 +37,16 @@ def splitdiff(im1, im2):
 					il2[nbox*x+y]=il2[nbox*x+y]+(sum(p2[width2*y+i, height2*x+j]))
 			il2[nbox*x+y]=il2[nbox*x+y]/(height2*width2)
 	for i in range(min(len(il1), len(il2))):
-		rms+=il1[i]**2-il2[i]**2
-	rms=math.sqrt(math.fabs(rms/min(len(il1), len(il2))))
+		rms+=math.fabs(il1[i]**2-il2[i]**2)
+	rms=math.sqrt(rms/min(len(il1), len(il2)))
 	return rms
 
 if __name__=="__main__":
 	img1=Image.open(sys.argv[1])
 	img2=Image.open(sys.argv[2])
 	if equal(img1, img2):
-		print "Duplicate detected"
+		print("Duplicate detected")
 	else:
-		"""print mydiff(img1, img2)
-		print mydiff2(img1, img2)
-		print mydiff3(img1, img2)
-		print mydiff(img1, img2)+mydiff2(img1, img2)+mydiff3(img1, img2)"""
-		print splitdiff(img1, img2);
+		print mydiff(img1, img2)
+		"""print mydiff2(img1, img2)"""
+		print(splitdiff(img1, img2, 20))
