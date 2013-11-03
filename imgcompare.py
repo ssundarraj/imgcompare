@@ -1,9 +1,9 @@
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageStat
 import math
 import sys
 
 def equal(im1, im2):
-    return ImageChops.difference(im1, im2).getbbox() is None
+	return ImageChops.difference(im1, im2).getbbox() is None
 
 def mydiff(img1, img2):
 	h1=img1.histogram()
@@ -41,6 +41,19 @@ def splitdiff(im1, im2, n):
 	rms=math.sqrt(rms/min(len(il1), len(il2)))
 	return rms
 
+def brightness(im):
+	stat=ImageStat.Stat(im)
+	r,g,b=stat.mean
+	brightness=math.sqrt(0.241*(r**2) + 0.691*(g**2) + 0.068*(b**2))
+	return brightness
+
+def brightnessdiff(im1, im2):
+	bdiff=math.fabs(brightness(im1)-brightness(im2))
+	return bdiff
+
+def edgedetect():
+	pass
+
 if __name__=="__main__":
 	img1=Image.open(sys.argv[1])
 	img2=Image.open(sys.argv[2])
@@ -48,5 +61,5 @@ if __name__=="__main__":
 		print("Duplicate detected")
 	else:
 		print mydiff(img1, img2)
-		"""print mydiff2(img1, img2)"""
-		print(splitdiff(img1, img2, 20))
+		print splitdiff(img1, img2, 20)
+	print brightnessdiff(img1, img2)
